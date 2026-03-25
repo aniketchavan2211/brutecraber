@@ -48,7 +48,7 @@ fn banner() {
             .truecolor(222, 74, 31)
     );
     println!("                                                Author: erikgavs");
-    println!("                                                v0.1.0");
+    println!("                                                v0.3.0");
     println!();
     println!(
         " [!] DISCLAIMER: This software is provided for ethical hacking and penetration testing"
@@ -77,9 +77,11 @@ fn main() -> anyhow::Result<()> {
 
     let wordlist = fs::read_to_string(&args.wordlist)?;
 
-    println!("\nSelected file: {}", args.file.green());
+    println!();
+    println!("Selected file: {}", args.file.green());
     println!("Selected wordlist: {}", args.wordlist.green());
     println!("Selected hash: {}", args.hash.green());
+    println!();
 
     // for each word in wordlist, convert it to md5 hash
     // if the hash matches one in hashes.txt, that word is the original text
@@ -146,13 +148,14 @@ fn main() -> anyhow::Result<()> {
         }
     }
 
+    println!();
     if found == 0 {
-        println!("\n{} failed cracking hashes or bad file\n", bad_star.red())
+        println!("{} failed cracking hashes or bad file", bad_star.red());
     }
 
     if found > 0 {
         println!(
-            "\n{} cracked {}/{} hashes\n",
+            "{} cracked {}/{} hashes",
             good_star.green(),
             found,
             hashes.len()
