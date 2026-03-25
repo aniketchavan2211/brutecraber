@@ -2,6 +2,7 @@ use anyhow;
 use clap::Parser;
 use colored::Colorize;
 use md5::compute;
+use sha1::{Digest, Sha1};
 use std::fs;
 
 #[derive(Parser)] // sabe leer argumentos (derive(parser))
@@ -17,17 +18,44 @@ struct Args {
 }
 
 fn banner() {
-    println!("{}", r" ___.                 __                            ___.".truecolor(222, 74, 31));
-    println!("{}", r" \_ |_________ __ ___/  |_  ____   ________________ \_ |__   ___________".truecolor(222, 74, 31));
-    println!("{}", r"  | __ \_  __ \  |  \   __\/ __ \_/ ___\_  __ \__  \ | __ \_/ __ \_  __ \".truecolor(222, 74, 31));
-    println!("{}", r"  | \_\ \  | \/  |  /|  | \  ___/\  \___|  | \// __ \| \_\ \  ___/|  | \/".truecolor(222, 74, 31));
-    println!("{}", r"  |___  /__|  |____/ |__|  \___  >\___  >__|  (____  /___  /\___  >__|".truecolor(222, 74, 31));
-    println!("{}", r"      \/                       \/     \/           \/    \/     \/".truecolor(222, 74, 31));
+    println!(
+        "{}",
+        r" ___.                 __                            ___.".truecolor(222, 74, 31)
+    );
+    println!(
+        "{}",
+        r" \_ |_________ __ ___/  |_  ____   ________________ \_ |__   ___________"
+            .truecolor(222, 74, 31)
+    );
+    println!(
+        "{}",
+        r"  | __ \_  __ \  |  \   __\/ __ \_/ ___\_  __ \__  \ | __ \_/ __ \_  __ \"
+            .truecolor(222, 74, 31)
+    );
+    println!(
+        "{}",
+        r"  | \_\ \  | \/  |  /|  | \  ___/\  \___|  | \// __ \| \_\ \  ___/|  | \/"
+            .truecolor(222, 74, 31)
+    );
+    println!(
+        "{}",
+        r"  |___  /__|  |____/ |__|  \___  >\___  >__|  (____  /___  /\___  >__|"
+            .truecolor(222, 74, 31)
+    );
+    println!(
+        "{}",
+        r"      \/                       \/     \/           \/    \/     \/"
+            .truecolor(222, 74, 31)
+    );
     println!("                                                Author: erikgavs");
     println!("                                                v0.1.0");
     println!();
-    println!(" [!] DISCLAIMER: This software is provided for ethical hacking and penetration testing");
-    println!("     only. You are solely responsible for your actions. Using this tool against targets");
+    println!(
+        " [!] DISCLAIMER: This software is provided for ethical hacking and penetration testing"
+    );
+    println!(
+        "     only. You are solely responsible for your actions. Using this tool against targets"
+    );
     println!("     without prior consent is a violation of applicable laws. Use at your own risk.");
     println!();
 }
@@ -85,6 +113,18 @@ fn main() -> anyhow::Result<()> {
                         found += 1;
                     }
                 }
+            }
+        } else if args.hash == "sha1" {
+            // hasher instance
+            let mut hash_engine = Sha1::new();
+            hash_engine.update(word);
+            let hash = format!("{:x}", hash_engine.finalize());
+
+            // file with hashes, provided by the user
+            if hashes.contains(&hash.as_str()) {
+                println!("{} hash cracked {} -> {}", good_star.green(), hash, word);
+
+                found += 1;
             }
         }
     }
