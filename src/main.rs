@@ -78,8 +78,8 @@ fn main() -> anyhow::Result<()> {
     let wordlist = fs::read_to_string(&args.wordlist)?;
 
     println!("\nSelected file: {}", args.file.green());
-    println!("Selected wordlist {}", args.wordlist.green());
-    println!("Selected hash {}\n", args.hash.green());
+    println!("Selected wordlist: {}", args.wordlist.green());
+    println!("Selected hash: {}", args.hash.green());
 
     // for each word in wordlist, convert it to md5 hash
     // if the hash matches one in hashes.txt, that word is the original text
@@ -88,7 +88,7 @@ fn main() -> anyhow::Result<()> {
             let hash = format!("{:x}", md5::compute(word));
             if hashes.contains(&hash.as_str()) {
                 println!(
-                    "\n{} hash cracked {} -> {}\n",
+                    "{} hash cracked {} -> {}",
                     good_star.green(),
                     hash,
                     word
@@ -104,7 +104,7 @@ fn main() -> anyhow::Result<()> {
 
                     if hex == hash {
                         println!(
-                            "\n{} hash decoded and cracked {} -> {} -> {}\n",
+                            "{} hash decoded and cracked {} -> {} -> {}",
                             good_star.green(),
                             h,
                             hex,
@@ -136,7 +136,7 @@ fn main() -> anyhow::Result<()> {
 
     if found > 0 {
         println!(
-            "{} cracked {}/{} hashes\n",
+            "\n{} cracked {}/{} hashes\n",
             good_star.green(),
             found,
             hashes.len()
