@@ -1,3 +1,5 @@
+<div align="center">
+
 ```
  ___.                 __                            ___.
  \_ |_________ __ ___/  |_  ____   ________________ \_ |__   ___________
@@ -7,22 +9,45 @@
       \/                       \/     \/           \/    \/     \/
 ```
 
-# 🦀 BruteCraber
+# BruteCraber
 
-A fast hash cracker using wordlist-based dictionary attacks. Built with Rust.
+**A blazing-fast, multithreaded hash cracker built with Rust.**
 
-## ✨ Features
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Rust](https://img.shields.io/badge/Built%20with-Rust-DE4A1F?logo=rust)](https://www.rust-lang.org/)
+[![Version](https://img.shields.io/badge/version-0.5.0-orange)](https://github.com/erikgavs/brutecraber/releases)
 
-- 🔓 MD5, SHA1, SHA256 and SHA512 hash cracking via wordlist
-- 🔑 Base64 support for all hash types
-- 🧂 Salted hash support (format: `salt:hash`)
-- 🔍 Auto-detection of hash type (no need to specify `-t`)
-- 🎨 Colored terminal output
-- 📁 Modular architecture (separate modules per hash type)
-- ⚡ Multithreaded cracking with `rayon` (uses all CPU cores)
-- 🖥️ Clean CLI interface with `-f`, `-w`, `-t`, `-V` and `-h` flags
+Crack hashes using wordlist-based dictionary attacks. Powered by `rayon` for parallel processing across all CPU cores.
 
-## 📦 Installation
+[Features](#-features) · [Installation](#-installation) · [Usage](#-usage) · [Supported Hashes](#-supported-hashes) · [Contributing](#-contributing)
+
+</div>
+
+---
+
+## Why BruteCraber?
+
+- **Fast** — Multithreaded by default. Uses all your CPU cores out of the box.
+- **Simple** — One command. No config files. No setup.
+- **Smart** — Auto-detects hash types. Just point it at a file and go.
+- **12 modes** — Hex, Base64, and Salted variants for MD5, SHA1, SHA256, and SHA512.
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Multithreading** | Parallel cracking with `rayon` — scales with your CPU |
+| **Auto-detection** | No need to specify hash type, BruteCraber figures it out |
+| **Hex hashes** | MD5, SHA1, SHA256, SHA512 |
+| **Base64 hashes** | Base64-encoded versions of all hash types |
+| **Salted hashes** | Support for `salt:hash` format |
+| **Colored output** | Clear, readable terminal output |
+
+---
+
+## Installation
 
 ```bash
 git clone https://github.com/erikgavs/brutecraber.git
@@ -32,86 +57,116 @@ cargo build --release
 
 The binary will be at `./target/release/brutecraber`.
 
-## 🚀 Usage
+---
+
+## Usage
 
 ```bash
 ./brutecraber -f <hashes_file> -w <wordlist> [-t <hash_type>]
 ```
 
-### 📝 Examples
+### Quick start
 
 ```bash
 # Auto-detect hash type
-./brutecraber -f hashes.txt -w wordlist.txt
+./brutecraber -f hashes.txt -w rockyou.txt
 
-# Crack MD5 hashes
-./brutecraber -f hashes.txt -w wordlist.txt -t md5
+# Specify hash type manually
+./brutecraber -f hashes.txt -w rockyou.txt -t sha256
 
-# Crack MD5 hashes encoded in Base64
-./brutecraber -f hashes_base64.txt -w wordlist.txt -t md5-base64
-
-# Crack SHA1 hashes
-./brutecraber -f hashes.txt -w wordlist.txt -t sha1
-
-# Crack SHA1 hashes encoded in Base64
-./brutecraber -f hashes_base64.txt -w wordlist.txt -t sha1-base64
-
-# Crack SHA256 hashes
-./brutecraber -f hashes.txt -w wordlist.txt -t sha256
-
-# Crack SHA256 hashes encoded in Base64
-./brutecraber -f hashes_base64.txt -w wordlist.txt -t sha256-base64
-
-# Crack SHA512 hashes
-./brutecraber -f hashes.txt -w wordlist.txt -t sha512
-
-# Crack SHA512 hashes encoded in Base64
-./brutecraber -f hashes_base64.txt -w wordlist.txt -t sha512-base64
-
-# Crack MD5 salted hashes (format: salt:hash)
-./brutecraber -f salted_hashes.txt -w wordlist.txt -t md5-salt
-
-# Crack SHA1 salted hashes
-./brutecraber -f salted_hashes.txt -w wordlist.txt -t sha1-salt
-
-# Crack SHA256 salted hashes
-./brutecraber -f salted_hashes.txt -w wordlist.txt -t sha256-salt
-
-# Crack SHA512 salted hashes
-./brutecraber -f salted_hashes.txt -w wordlist.txt -t sha512-salt
+# Crack salted hashes
+./brutecraber -f salted.txt -w rockyou.txt -t md5-salt
 ```
 
-### 🔧 Options
+### Options
 
-| Flag | Description |
-|------|-------------|
-| `-f` | Path to file containing hashes (one per line) |
-| `-w` | Path to wordlist file |
-| `-t` | Hash type (optional, auto-detected if not specified): `md5`, `md5-base64`, `md5-salt`, `sha1`, `sha1-base64`, `sha1-salt`, `sha256`, `sha256-base64`, `sha256-salt`, `sha512`, `sha512-base64`, `sha512-salt` |
-| `-h` | Show help |
-| `-V` | Show version |
+| Flag | Description | Default |
+|------|-------------|---------|
+| `-f` | Path to file containing hashes (one per line) | *required* |
+| `-w` | Path to wordlist file | *required* |
+| `-t` | Hash type (see table below) | `auto` |
+| `-h` | Show help | — |
+| `-V` | Show version | — |
 
-## 📄 Supported hash types
+### Example output
 
-| Type | Description |
-|------|-------------|
-| `md5` | Standard MD5 hashes in hexadecimal |
-| `md5-base64` | MD5 hashes encoded in Base64 |
-| `sha1` | Standard SHA1 hashes in hexadecimal |
-| `sha1-base64` | SHA1 hashes encoded in Base64 |
-| `sha256` | Standard SHA256 hashes in hexadecimal |
-| `sha256-base64` | SHA256 hashes encoded in Base64 |
-| `sha512` | Standard SHA512 hashes in hexadecimal |
-| `sha512-base64` | SHA512 hashes encoded in Base64 |
-| `md5-salt` | MD5 hashes with salt (format: `salt:hash`) |
-| `sha1-salt` | SHA1 hashes with salt (format: `salt:hash`) |
-| `sha256-salt` | SHA256 hashes with salt (format: `salt:hash`) |
-| `sha512-salt` | SHA512 hashes with salt (format: `salt:hash`) |
+```
+ [*] hash cracked 5f4dcc3b5aa765d61d8327deb882cf99 -> password
+ [*] hash cracked 21232f297a57a5a743894a0e4a801fc3 -> admin
+ [*] hash cracked [salt:x7k2] 86f75bc83edcd705c834c436f6b64fdc -> password
 
-## ⚠️ Disclaimer
+ [*] cracked 3/3 hashes
+```
 
-This tool is intended for **ethical hacking and educational purposes only**. Unauthorized use against systems without prior consent is illegal. Use at your own risk.
+---
 
-## 👤 Author
+## Supported Hashes
 
-**erikgavs**
+| Algorithm | Hex | Base64 | Salted |
+|-----------|:---:|:------:|:------:|
+| MD5 | `md5` | `md5-base64` | `md5-salt` |
+| SHA1 | `sha1` | `sha1-base64` | `sha1-salt` |
+| SHA256 | `sha256` | `sha256-base64` | `sha256-salt` |
+| SHA512 | `sha512` | `sha512-base64` | `sha512-salt` |
+
+> Salted hashes use the format `salt:hash` (one per line).
+
+---
+
+## Project Structure
+
+```
+brutecraber/
+├── src/
+│   ├── main.rs          # CLI, banner, entry point
+│   ├── cracker.rs       # Core cracking logic (multithreaded)
+│   ├── detector.rs      # Auto-detection by hash length
+│   └── hashes/
+│       ├── mod.rs       # Module exports
+│       ├── md5.rs       # MD5 hashing
+│       ├── sha1_hash.rs # SHA1 hashing
+│       ├── sha256.rs    # SHA256 hashing
+│       └── sha512.rs    # SHA512 hashing
+├── tests/               # Test hashes and wordlists
+├── Cargo.toml
+├── CHANGELOG.md
+└── LICENSE
+```
+
+---
+
+## Roadmap
+
+- [ ] Progress bar with `indicatif`
+- [ ] Output results to file (`-o`)
+- [ ] Benchmark mode (`--benchmark`)
+- [ ] NTLM hash support
+- [ ] Statistics (time, hashes/sec)
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/awesome`)
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+---
+
+## Disclaimer
+
+> This tool is intended for **ethical hacking, penetration testing, and educational purposes only**. You are solely responsible for your actions. Using this tool against targets without prior consent is a violation of applicable laws. Use at your own risk.
+
+---
+
+<div align="center">
+
+Made with Rust by **[erikgavs](https://github.com/erikgavs)**
+
+If you find this useful, consider giving it a star!
+
+</div>
