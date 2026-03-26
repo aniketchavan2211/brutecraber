@@ -1,4 +1,5 @@
 mod cracker;
+mod detector;
 mod hashes;
 
 use anyhow;
@@ -82,6 +83,15 @@ fn main() -> anyhow::Result<()> {
     println!("Selected wordlist: {}", args.wordlist.green());
     println!("Selected hash: {}", args.hash.green());
     println!();
+
+    let _auto_detect = if args.hash == "auto" {
+        // get's the first hash of the list
+        // unwrap_or(&"") -> if the txt is empty, use a empty string
+        let detect_hash = hashes.first().unwrap_or(&"");
+        detector::detect(detect_hash).to_string()
+    } else {
+        args.hash.clone()
+    };
 
     let found = cracker::run(&hashes, &wordlist, &args.hash);
 
