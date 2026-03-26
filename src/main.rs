@@ -8,14 +8,15 @@ use colored::Colorize;
 use std::fs;
 
 #[derive(Parser)] // sabe leer argumentos (derive(parser))
+#[command(name = "brutecraber", version = "0.5.0")]
 struct Args {
-    #[arg(short = 'f')]
+    #[arg(short = 'f', help = "Path to file containing hashes")]
     file: String,
 
-    #[arg(short = 'w')]
+    #[arg(short = 'w', help = "Path to wordlist file")]
     wordlist: String,
 
-    #[arg(short = 't', default_value = "auto")]
+    #[arg(short = 't', default_value = "auto", help = "Hash type: md5, md5-base64, md5-salt, sha1, sha1-base64, sha1-salt, sha256, sha256-base64, sha256-salt, sha512, sha512-base64, sha512-salt")]
     hash: String,
 }
 
