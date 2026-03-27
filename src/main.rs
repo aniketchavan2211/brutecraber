@@ -67,7 +67,7 @@ fn banner() {
     println!("     without prior consent is a violation of applicable laws. Use at your own risk.");
     println!();
     println!(
-        " {} MD5 · SHA1 · SHA256 · SHA512  {} hex · base64 · salted",
+        " {} MD5 · SHA1 · SHA256 · SHA512 · Bcrypt  {} hex · base64 · salted",
         "Supported:".truecolor(222, 74, 31),
         "Modes:".truecolor(222, 74, 31)
     );

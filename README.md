@@ -30,7 +30,7 @@ Crack hashes using wordlist-based dictionary attacks. Powered by `rayon` for par
 - **Fast** — Multithreaded by default. Uses all your CPU cores out of the box.
 - **Simple** — One command. No config files. No setup.
 - **Smart** — Auto-detects hash types. Just point it at a file and go.
-- **12 modes** — Hex, Base64, and Salted variants for MD5, SHA1, SHA256, and SHA512.
+- **13 modes** — Hex, Base64, Salted, and Bcrypt support for MD5, SHA1, SHA256, SHA512, and Bcrypt.
 
 ---
 
@@ -41,6 +41,7 @@ Crack hashes using wordlist-based dictionary attacks. Powered by `rayon` for par
 | **Multithreading** | Parallel cracking with `rayon` — scales with your CPU |
 | **Auto-detection** | No need to specify hash type, BruteCraber figures it out |
 | **Hex hashes** | MD5, SHA1, SHA256, SHA512 |
+| **Bcrypt** | Bcrypt hash verification (`$2b$`, `$2y$`) |
 | **Base64 hashes** | Base64-encoded versions of all hash types |
 | **Salted hashes** | Support for `salt:hash` format |
 | **Colored output** | Clear, readable terminal output |
@@ -76,6 +77,9 @@ The binary will be at `./target/release/brutecraber`.
 
 # Crack salted hashes
 ./brutecraber -f salted.txt -w rockyou.txt -t md5-salt
+
+# Crack bcrypt hashes
+./brutecraber -f bcrypt_hashes.txt -w rockyou.txt -t bcrypt
 ```
 
 ### Options
@@ -108,8 +112,10 @@ The binary will be at `./target/release/brutecraber`.
 | SHA1 | `sha1` | `sha1-base64` | `sha1-salt` |
 | SHA256 | `sha256` | `sha256-base64` | `sha256-salt` |
 | SHA512 | `sha512` | `sha512-base64` | `sha512-salt` |
+| Bcrypt | `bcrypt` | — | — |
 
 > Salted hashes use the format `salt:hash` (one per line).
+> Bcrypt hashes include their own salt internally (`$2y$10$...`).
 
 ---
 
@@ -126,7 +132,8 @@ brutecraber/
 │       ├── md5.rs       # MD5 hashing
 │       ├── sha1_hash.rs # SHA1 hashing
 │       ├── sha256.rs    # SHA256 hashing
-│       └── sha512.rs    # SHA512 hashing
+│       ├── sha512.rs    # SHA512 hashing
+│       └── bcrypt.rs    # Bcrypt verification
 ├── tests/               # Test hashes and wordlists
 ├── Cargo.toml
 ├── CHANGELOG.md
@@ -137,11 +144,13 @@ brutecraber/
 
 ## Roadmap
 
-- [ ] Progress bar with `indicatif`
+- [x] Progress bar with `indicatif`
+- [x] Bcrypt support
 - [ ] Output results to file (`-o`)
 - [ ] Benchmark mode (`--benchmark`)
 - [ ] NTLM hash support
 - [ ] Statistics (time, hashes/sec)
+- [ ] Rule-based transformations (leet speak, capitalize, append numbers)
 
 ---
 

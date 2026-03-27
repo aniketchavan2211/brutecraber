@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.6.0] - 2026-03-27
+
+### Added
+- Bcrypt hash cracking support
+- Progress bar with `indicatif`
+- UTF-8 lossy handling for wordlists (no more crashes with rockyou.txt)
+- Rule-based transformation module (leet speak, capitalize, append numbers, etc.)
+
 ## [0.5.0] - 2026-03-26
 
 ### Added
