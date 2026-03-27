@@ -1,5 +1,6 @@
-use bcrypt
+use bcrypt::verify;
 
-pub fn crack(word: &str) -> String {
-    let hash_engine = bcrypt(cost, salt, password)
+// verify returns bool!
+pub fn crack(word: &str, hash: &str) -> bool {
+    verify(word, hash).unwrap_or(false)
 }
