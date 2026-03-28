@@ -156,13 +156,7 @@ brutecraber/
 
 ## Contributing
 
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b feature/awesome`)
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+Contributions are welcome! Check out the [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started.
 
 ---
 
