@@ -26,7 +26,7 @@ struct Args {
     #[arg(
         short = 'r',
         long = "rules",
-        default_value = "false",
+        default_value_t = false,
         help = "Enable rule-based transformations"
     )]
     rules: bool,
@@ -123,7 +123,7 @@ fn main() -> anyhow::Result<()> {
         println!("Selected hash: {}\n", auto_detect.green());
     }
 
-    let found = cracker::run(&hashes, &wordlist, &auto_detect);
+    let found = cracker::run(&hashes, &wordlist, &auto_detect, args.rules);
 
     println!();
     if found == 0 {
