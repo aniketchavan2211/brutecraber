@@ -58,29 +58,16 @@ jobs:
           name: ${{ steps.meta.outputs.name }}-${{ steps.meta.outputs.os }}-${{ steps.meta.outputs.arch }}
           path: dist/*.tar.gz
 
-      # 🧾 Generate release notes (SAFE VERSION)
+      # 🧾 Generate release notes (CUSTOM STRUCTURE)
       - name: Generate release notes
         run: |
-          echo "## ${{ steps.meta.outputs.name }} v${{ steps.meta.outputs.version }} 🚀" > release.md
+          echo "## BruteCraber v${{ steps.meta.outputs.version }} Latest" > release.md
           echo "" >> release.md
-          echo "### 🖥️ Build Info" >> release.md
-          echo "- OS: ${{ steps.meta.outputs.os }}" >> release.md
-          echo "- Architecture: ${{ steps.meta.outputs.arch }}" >> release.md
-          echo "- Rust Toolchain: stable" >> release.md
+          echo "### What's New in v${{ steps.meta.outputs.version }}" >> release.md
           echo "" >> release.md
-          echo "### ✨ What's Included" >> release.md
-          echo "- Automated release via GitHub Actions" >> release.md
-          echo "- Built using cargo build --release" >> release.md
-          echo "- Optimized binary for performance" >> release.md
-          echo "" >> release.md
-          echo "### 📦 Download" >> release.md
-          echo "${{ steps.meta.outputs.name }}-${{ steps.meta.outputs.os }}-${{ steps.meta.outputs.arch }}.tar.gz" >> release.md
-          echo "" >> release.md
-          echo "### 🔐 Notes" >> release.md
-          echo "- Version sourced from Cargo.toml" >> release.md
-          echo "- Reproducible build with --locked" >> release.md
+          echo "_(Maintainers can update this section manually with detailed changes.)_" >> release.md
 
-      # 🚀 Create Release
+     # 🚀 Create Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
