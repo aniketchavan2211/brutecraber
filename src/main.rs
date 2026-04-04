@@ -8,7 +8,7 @@ use clap::Parser;
 use colored::Colorize;
 use std::fs;
 
-#[derive(Parser)]
+#[derive(Parser)] // sabe leer argumentos (derive(parser))
 #[command(name = "brutecraber", version = "0.7.1")]
 struct Args {
     #[arg(
@@ -66,7 +66,7 @@ fn banner() {
             .truecolor(222, 74, 31)
     );
     println!("                                                Author: erikgavs");
-    println!("                                                v0.7.0");
+    println!("                                                v0.7.1");
     println!();
     println!(
         " [!] DISCLAIMER: This software is provided for ethical hacking and penetration testing"
