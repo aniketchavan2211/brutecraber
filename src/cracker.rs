@@ -255,6 +255,29 @@ pub fn run(hashes: &[&str], wordlist: &str, hash_type: &str, rule: bool) -> usiz
                         }
                     }
                 }
+                "sha512/sha3-512" => {
+                    let hash = hashes::sha512::crack(w);
+                    if hashes.contains(&hash.as_str()) {
+                        bar.println(format!(
+                            "{} hash cracked {} -> {}",
+                            good_star.green(),
+                            hash,
+                            w
+                        ));
+                        found.fetch_add(1, Ordering::Relaxed);
+                    } else {
+                        let hash = hashes::sha3_512::crack(w);
+                        if hashes.contains(&hash.as_str()) {
+                            bar.println(format!(
+                                "{} hash cracked {} -> {}",
+                                good_star.green(),
+                                hash,
+                                w
+                            ));
+                            found.fetch_add(1, Ordering::Relaxed);
+                        }
+                    }
+                }
                 "md5-salt" => {
                     for h in hashes {
                         if let Some((salt, target)) = h.split_once(':') {
