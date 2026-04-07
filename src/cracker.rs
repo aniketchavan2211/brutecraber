@@ -377,3 +377,20 @@ pub fn run(hashes: &[&str], wordlist: &str, hash_type: &str, rule: bool) -> usiz
 
     found.load(Ordering::Relaxed)
 }
+
+fn parallel_crack<F>(wordlist: &str, rule: bool, bar: &ProgressBar, matcher: F)
+where
+    F: Fn(&str) + Sync + Send,
+{
+    wordlist.lines().par_bridge().for_each(|word| {
+        bar.inc(1);
+
+        if rule {
+            for w in crate::rules::apply(word) {
+                matcher(&w);
+            }
+        } else {
+            matcher(word);
+        }
+    });
+}
