@@ -406,62 +406,56 @@ pub fn run(hashes: &[&str], wordlist: &str, hash_type: &str, rule: bool) -> usiz
         return found.load(Ordering::Relaxed);
     }
 
-    // .par_bridge, iterates in paralel, for_each (each line, it's a word)
-    wordlist.lines().par_bridge().for_each(|word| {
-        bar.inc(1);
-
-        let words_to_try = if rule {
-            crate::rules::apply(word)
-        } else {
-            vec![word.to_string()]
-        };
-
-        for w in &words_to_try {
-            match hash_type {
-                "sha256/sha3-256" => {
-                    let hash = hashes::sha256::crack(w);
-                    if hashes.contains(&hash.as_str()) {
-                        bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
-                        found.fetch_add(1, Ordering::Relaxed);
-                    } else {
-                        let hash = hashes::sha3_256::crack(w);
-                        if hashes.contains(&hash.as_str()) {
-                            bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
-                            found.fetch_add(1, Ordering::Relaxed);
-                        }
-                    }
-                }
-                "sha512/sha3-512" => {
-                    let hash = hashes::sha512::crack(w);
-                    if hashes.contains(&hash.as_str()) {
-                        bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
-                        found.fetch_add(1, Ordering::Relaxed);
-                    } else {
-                        let hash = hashes::sha3_512::crack(w);
-                        if hashes.contains(&hash.as_str()) {
-                            bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
-                            found.fetch_add(1, Ordering::Relaxed);
-                        }
-                    }
-                }
-                "bcrypt" => {
-                    for h in hashes {
-                        if hashes::bcrypt::crack(w, h) {
-                            bar.println(format!("{} hash cracked {} -> {}", star.green(), h, w));
-                            found.fetch_add(1, Ordering::Relaxed);
-                        }
-                    }
-                }
-                _ => {
-                    bar.println(format!("\n{} unsupported type of hash", "[!]".red()));
-                    return;
+    if hash_type == "sha256/sha3-256" {
+        parallel_crack(wordlist, rule, &bar, |w| {
+            let hash = hashes::sha256::crack(w);
+            if hashes.contains(&hash.as_str()) {
+                bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
+                found.fetch_add(1, Ordering::Relaxed);
+            } else {
+                let hash = hashes::sha3_256::crack(w);
+                if hashes.contains(&hash.as_str()) {
+                    bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
+                    found.fetch_add(1, Ordering::Relaxed);
                 }
             }
-        }
-    });
+        });
+        bar.finish();
+        return found.load(Ordering::Relaxed);
+    }
+
+    if hash_type == "sha512/sha3-512" {
+        parallel_crack(wordlist, rule, &bar, |w| {
+            let hash = hashes::sha512::crack(w);
+            if hashes.contains(&hash.as_str()) {
+                bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
+                found.fetch_add(1, Ordering::Relaxed);
+            } else {
+                let hash = hashes::sha3_512::crack(w);
+                if hashes.contains(&hash.as_str()) {
+                    bar.println(format!("{} hash cracked {} -> {}", star.green(), hash, w));
+                    found.fetch_add(1, Ordering::Relaxed);
+                }
+            }
+        });
+        bar.finish();
+        return found.load(Ordering::Relaxed);
+    }
+
+    if hash_type == "bcrypt" {
+        parallel_crack(wordlist, rule, &bar, |w| {
+            for h in hashes {
+                if hashes::bcrypt::crack(w, h) {
+                    bar.println(format!("{} hash cracked {} -> {}", star.green(), h, w));
+                    found.fetch_add(1, Ordering::Relaxed);
+                }
+            }
+        });
+        bar.finish();
+        return found.load(Ordering::Relaxed);
+    }
 
     bar.finish();
-
     found.load(Ordering::Relaxed)
 }
 
