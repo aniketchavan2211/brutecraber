@@ -1,12 +1,9 @@
 use crate::hashes;
-use base64::{engine::general_purpose, prelude::BASE64_STANDARD, Engine};
+use base64::{engine::general_purpose, Engine};
 use colored::Colorize;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
-use std::{
-    hash,
-    sync::atomic::{AtomicUsize, Ordering},
-};
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub fn run(hashes: &[&str], wordlist: &str, hash_type: &str, rule: bool) -> usize {
     let good_star = "[*]";
