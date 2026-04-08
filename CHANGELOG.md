@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.8.1] - 2026-04-08
+
+### Performance
+- Chunked parallel processing with `par_chunks(64)` for reduced thread synchronization overhead (+20-60% multi-thread performance)
+- SIMD-accelerated hex decoding via `faster-hex` crate
+- Enabled ASM features for `md-5`, `sha1`, `sha2` crates (benefits CPUs with SHA-NI support)
+
+### Changed
+- Updated to Rust Edition 2024
+
+### Benchmark Improvements (4-core Intel)
+| Hash | v0.8.0 | v0.8.1 | Improvement |
+|------|--------|--------|-------------|
+| MD5 | 7.58 MH/s | 8.05 MH/s | +6% |
+| SHA256 | 2.41 MH/s | 2.94 MH/s | +22% |
+| SHA512 | 1.90 MH/s | 2.28 MH/s | +20% |
+| SHA3-256 | 1.21 MH/s | 1.78 MH/s | +47% |
+| SHA3-512 | 1.16 MH/s | 1.85 MH/s | +59% |
+
 ## [0.8.0] - 2026-04-07
 
 ### Added
