@@ -1,5 +1,10 @@
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 
-
-pub fn crack(word: &str, hash: &str) -> [u8, 32] {
-
+pub fn verify(word: &str, hash: &str) -> bool {
+    match PasswordHash::new(hash) {
+        Ok(parsed_hash) => Argon2::default()
+            .verify_password(word.as_bytes(), &parsed_hash)
+            .is_ok(),
+        Err(_) => false,
+    }
 }
