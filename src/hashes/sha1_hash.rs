@@ -1,16 +1,16 @@
 use sha1::{Digest, Sha1};
 
-pub fn crack(word: &str) -> String {
+pub fn crack(word: &str) -> [u8; 20] {
     let mut hash_engine = Sha1::new();
     hash_engine.update(word);
-    format!("{:x}", hash_engine.finalize())
+    hash_engine.finalize().into()
 }
 
-pub fn crack_with_salt(word: &str, salt: &str) -> String {
+pub fn crack_with_salt(word: &str, salt: &str) -> [u8; 20] {
     let salted = format!("{}{}", salt, word);
     let mut hash_engine = Sha1::new();
     hash_engine.update(salted);
-    format!("{:x}", hash_engine.finalize())
+    hash_engine.finalize().into()
 }
 
 #[cfg(test)]
