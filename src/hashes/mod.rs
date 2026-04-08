@@ -1,3 +1,4 @@
+pub mod argon2;
 pub mod bcrypt;
 pub mod md5;
 pub mod ntlm;
