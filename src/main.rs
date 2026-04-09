@@ -1,9 +1,13 @@
+mod backend;
 mod benchmark;
+mod cpu_backend;
 mod cracker;
 mod detector;
 mod hashes;
 mod rules;
 
+use crate::backend::CrackingBackend;
+use crate::cpu_backend::CpuBackend;
 use clap::Parser;
 use colored::Colorize;
 use std::fs;
@@ -138,7 +142,8 @@ fn main() -> anyhow::Result<()> {
         println!("{} Selected hash: {}\n", star, auto_detect.green());
     }
 
-    let found = cracker::run(&hashes, &wordlist, &auto_detect, args.rules);
+    let backend = CpuBackend;
+    let found = backend.run(&hashes, &wordlist, &auto_detect, args.rules);
 
     println!();
 
