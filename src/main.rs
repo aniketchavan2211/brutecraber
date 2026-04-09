@@ -1,9 +1,15 @@
+mod backend;
 mod benchmark;
+mod cpu_backend;
 mod cracker;
 mod detector;
+#[cfg(feature = "gpu")]
+mod gpu_backend;
 mod hashes;
 mod rules;
 
+use crate::backend::CrackingBackend;
+use crate::cpu_backend::CpuBackend;
 use clap::Parser;
 use colored::Colorize;
 use std::fs;
@@ -37,6 +43,14 @@ struct Args {
 
     #[arg(long = "benchmark", default_value_t = false)]
     benchmark: bool,
+
+    #[cfg(feature = "gpu")]
+    #[arg(
+        long = "gpu",
+        default_value_t = false,
+        help = "Use GPU acceleration (OpenCL)"
+    )]
+    gpu: bool,
 }
 
 fn banner() {
@@ -96,7 +110,17 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     if args.benchmark {
-        benchmark::run();
+        let use_gpu = {
+            #[cfg(feature = "gpu")]
+            {
+                args.gpu
+            }
+            #[cfg(not(feature = "gpu"))]
+            {
+                false
+            }
+        };
+        benchmark::run(use_gpu);
         return Ok(());
     }
 
@@ -138,7 +162,32 @@ fn main() -> anyhow::Result<()> {
         println!("{} Selected hash: {}\n", star, auto_detect.green());
     }
 
-    let found = cracker::run(&hashes, &wordlist, &auto_detect, args.rules);
+    #[cfg(feature = "gpu")]
+    if args.gpu {
+        use crate::gpu_backend::GpuBackend;
+
+        let gpu = match GpuBackend::new() {
+            Ok(g) => g,
+            Err(e) => {
+                eprintln!(" {} {}", "[!]".red(), e);
+                return Err(anyhow::anyhow!(e));
+            }
+        };
+        gpu.print_device_info();
+
+        let found = gpu.run(&hashes, &wordlist, &auto_detect, args.rules);
+
+        println!();
+        if found == 0 {
+            println!("{} failed cracking hashes or bad file\n", star.red());
+        } else {
+            println!("{} cracked {}/{} hashes", star.green(), found, hashes.len());
+        }
+        return Ok(());
+    }
+
+    let backend = CpuBackend;
+    let found = backend.run(&hashes, &wordlist, &auto_detect, args.rules);
 
     println!();
 
