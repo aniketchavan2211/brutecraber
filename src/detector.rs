@@ -1,4 +1,12 @@
 pub fn detect(hash: &str) -> &str {
+    if hash.starts_with("$argon2") {
+        return "argon2";
+    }
+
+    if hash.starts_with("$2") {
+        return "bcrypt";
+    }
+
     match hash.len() {
         32 => "md5",
         40 => "sha1",
