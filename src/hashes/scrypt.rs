@@ -1,6 +1,6 @@
 use scrypt::{
-    Scrypt,
     password_hash::{PasswordHash, PasswordVerifier},
+    Scrypt,
 };
 
 pub fn verify(word: &str, hash: &str) -> bool {
@@ -17,8 +17,8 @@ pub fn verify(word: &str, hash: &str) -> bool {
 mod tests {
     use super::*;
     use scrypt::{
-        Scrypt,
         password_hash::{PasswordHasher, SaltString},
+        Scrypt,
     };
 
     fn generate_hash(password: &str, salt: &str) -> String {

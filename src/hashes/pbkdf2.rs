@@ -1,6 +1,6 @@
 use pbkdf2::{
-    Pbkdf2,
     password_hash::{PasswordHash, PasswordVerifier},
+    Pbkdf2,
 };
 
 pub fn verify(word: &str, hash: &str) -> bool {

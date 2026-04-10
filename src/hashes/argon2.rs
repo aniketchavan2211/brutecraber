@@ -13,8 +13,8 @@ pub fn verify(word: &str, hash: &str) -> bool {
 mod tests {
     use super::*;
     use argon2::{
-        Argon2,
         password_hash::{PasswordHasher, SaltString},
+        Argon2,
     };
 
     fn generate_hash(password: &str, salt: &str) -> String {
