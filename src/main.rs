@@ -156,7 +156,7 @@ fn main() -> anyhow::Result<()> {
             use crate::gpu_backend::{self, GpuBackend};
 
             if force_cpu {
-                println!(" {} --cpu flag set, using CPU", "[*]".yellow());
+                println!("{} --cpu flag set, using CPU \n", "[*]".yellow());
                 CpuBackend.run(&hashes, &wordlist, &auto_detect, args.rules)
             } else if !gpu_backend::supports(&auto_detect) {
                 println!(
