@@ -102,16 +102,7 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     if args.benchmark {
-        let use_gpu = {
-            #[cfg(feature = "gpu")]
-            {
-                args.gpu
-            }
-            #[cfg(not(feature = "gpu"))]
-            {
-                false
-            }
-        };
+        let use_gpu = cfg!(feature = "gpu");
         benchmark::run(use_gpu);
         return Ok(());
     }
