@@ -20,9 +20,13 @@ const SHA3_256_KERNEL_SOURCE: &str = include_str!("kernels/sha3_256.cl");
 const SHA3_512_KERNEL_SOURCE: &str = include_str!("kernels/sha3_512.cl");
 const NTLM_KERNEL_SOURCE: &str = include_str!("kernels/ntlm.cl");
 
-const GPU_SUPPORTED_HEX_TYPES: &[&str] = &[
+pub const GPU_SUPPORTED_HEX_TYPES: &[&str] = &[
     "md5", "sha1", "sha256", "sha512", "sha3-256", "sha3-512", "ntlm",
 ];
+
+pub fn supports(hash_type: &str) -> bool {
+    GPU_SUPPORTED_HEX_TYPES.contains(&hash_type)
+}
 
 pub struct GpuBackend {
     device: Device,
