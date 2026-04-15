@@ -7,7 +7,7 @@ description = "A blazing-fast, multithreaded hash cracker built with Rust"
 repository = "https://github.com/Erikgavs/brutecraber"
 
 [features]
-default = []
+default = ["gpu"]
 gpu = ["opencl3"]
 
 [dependencies]

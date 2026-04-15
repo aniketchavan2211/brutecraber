@@ -20,9 +20,13 @@ const SHA3_256_KERNEL_SOURCE: &str = include_str!("kernels/sha3_256.cl");
 const SHA3_512_KERNEL_SOURCE: &str = include_str!("kernels/sha3_512.cl");
 const NTLM_KERNEL_SOURCE: &str = include_str!("kernels/ntlm.cl");
 
-const GPU_SUPPORTED_HEX_TYPES: &[&str] = &[
+pub const GPU_SUPPORTED_HEX_TYPES: &[&str] = &[
     "md5", "sha1", "sha256", "sha512", "sha3-256", "sha3-512", "ntlm",
 ];
+
+pub fn supports(hash_type: &str) -> bool {
+    GPU_SUPPORTED_HEX_TYPES.contains(&hash_type)
+}
 
 pub struct GpuBackend {
     device: Device,
@@ -45,11 +49,11 @@ impl GpuBackend {
 
         for &did in &device_ids {
             let dev = Device::new(did);
-            if let Ok(cu) = dev.max_compute_units() {
-                if cu > best_cu {
-                    best_cu = cu;
-                    best_id = did;
-                }
+            if let Ok(cu) = dev.max_compute_units()
+                && cu > best_cu
+            {
+                best_cu = cu;
+                best_id = did;
             }
         }
 
@@ -73,13 +77,12 @@ impl GpuBackend {
         let mem_mb = mem_bytes / (1024 * 1024);
 
         println!(
-            " {} GPU: {} | VRAM: {} MB | Compute Units: {}",
+            "{} GPU: {} | VRAM: {} MB | Compute Units: {}\n",
             "[*]".green(),
             name.trim().yellow(),
             mem_mb,
             cu
         );
-        println!();
     }
 
     fn gpu_mem_bytes(&self) -> u64 {
@@ -88,6 +91,7 @@ impl GpuBackend {
 
     /// Generic hash cracking method that works for any algorithm.
     /// All GPU-supported algorithms share the same kernel interface.
+    #[allow(clippy::too_many_arguments)]
     fn crack_hash(
         &self,
         hashes: &[&str],
@@ -248,6 +252,7 @@ impl GpuBackend {
     }
 
     /// Generic GPU batch execution — kernel interface is the same for all algorithms.
+    #[allow(clippy::too_many_arguments)]
     fn execute_hash_batch(
         &self,
         kernel: &Kernel,
@@ -472,7 +477,7 @@ impl CrackingBackend for GpuBackend {
             );
             expanded_wordlist = wordlist
                 .lines()
-                .flat_map(|word| crate::rules::apply(word))
+                .flat_map(crate::rules::apply)
                 .collect::<Vec<_>>()
                 .join("\n");
             expanded_wordlist.as_str()

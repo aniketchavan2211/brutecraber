@@ -44,13 +44,8 @@ struct Args {
     #[arg(long = "benchmark", default_value_t = false)]
     benchmark: bool,
 
-    #[cfg(feature = "gpu")]
-    #[arg(
-        long = "gpu",
-        default_value_t = false,
-        help = "Use GPU acceleration (OpenCL)"
-    )]
-    gpu: bool,
+    #[arg(long = "cpu", default_value_t = false, help = "Force CPU backend")]
+    cpu: bool,
 }
 
 fn banner() {
@@ -110,16 +105,7 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     if args.benchmark {
-        let use_gpu = {
-            #[cfg(feature = "gpu")]
-            {
-                args.gpu
-            }
-            #[cfg(not(feature = "gpu"))]
-            {
-                false
-            }
-        };
+        let use_gpu = cfg!(feature = "gpu");
         benchmark::run(use_gpu);
         return Ok(());
     }
@@ -162,32 +148,46 @@ fn main() -> anyhow::Result<()> {
         println!("{} Selected hash: {}\n", star, auto_detect.green());
     }
 
-    #[cfg(feature = "gpu")]
-    if args.gpu {
-        use crate::gpu_backend::GpuBackend;
+    let force_cpu = args.cpu;
 
-        let gpu = match GpuBackend::new() {
-            Ok(g) => g,
-            Err(e) => {
-                eprintln!(" {} {}", "[!]".red(), e);
-                return Err(anyhow::anyhow!(e));
+    let found = {
+        #[cfg(feature = "gpu")]
+        {
+            use crate::gpu_backend::{self, GpuBackend};
+
+            if force_cpu {
+                println!("{} --cpu flag set, using CPU\n", "[*]".yellow());
+                CpuBackend.run(&hashes, &wordlist, &auto_detect, args.rules)
+            } else if !gpu_backend::supports(&auto_detect) {
+                println!(
+                    "{} hash {} not supported on GPU, using CPU\n",
+                    "[*]".yellow(),
+                    auto_detect
+                );
+                CpuBackend.run(&hashes, &wordlist, &auto_detect, args.rules)
+            } else {
+                match GpuBackend::new() {
+                    Ok(gpu) => {
+                        gpu.print_device_info();
+                        gpu.run(&hashes, &wordlist, &auto_detect, args.rules)
+                    }
+                    Err(e) => {
+                        println!(
+                            "{} GPU unavailable ({}), falling back to CPU\n",
+                            "[!]".yellow(),
+                            e
+                        );
+                        CpuBackend.run(&hashes, &wordlist, &auto_detect, args.rules)
+                    }
+                }
             }
-        };
-        gpu.print_device_info();
-
-        let found = gpu.run(&hashes, &wordlist, &auto_detect, args.rules);
-
-        println!();
-        if found == 0 {
-            println!("{} failed cracking hashes or bad file\n", star.red());
-        } else {
-            println!("{} cracked {}/{} hashes", star.green(), found, hashes.len());
         }
-        return Ok(());
-    }
-
-    let backend = CpuBackend;
-    let found = backend.run(&hashes, &wordlist, &auto_detect, args.rules);
+        #[cfg(not(feature = "gpu"))]
+        {
+            let _ = force_cpu;
+            CpuBackend.run(&hashes, &wordlist, &auto_detect, args.rules)
+        }
+    };
 
     println!();
 
